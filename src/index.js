@@ -1,11 +1,8 @@
-import mongoose from "mongoose";
+import dotenv from "dotenv"
+import connectDB from "../db/db.js";
 
-(async ()=>{
-    try {
-        mongoose.connect(`${process.env.MONGO_DB_URL}`)
-    } catch (error) {
-        console.error("ERROR",error)
-        throw error
-    }
+dotenv.config({
+    path : './env'
 })
-()
+connectDB()
+
