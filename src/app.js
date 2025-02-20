@@ -20,5 +20,13 @@ app.use(express.urlencoded({
 //It serves static files and is based on serve-static.
 app.use(express.static("public"))
 app.use(cookieParser())
+
+//import routes
+import userRouter from './routes/user.route.js'
+//Routes Declaration
+
+app.use("/api/v2/users",userRouter)
+
+
 export {app}
 

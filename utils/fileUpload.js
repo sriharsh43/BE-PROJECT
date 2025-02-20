@@ -17,8 +17,7 @@ cloudinary.config({
             console.log("File is uploaded on cloudinary");
             console.log(response.url);
             return response
-            
-            b hi 
+             
         } catch (error) {
             fs.unlink(localFilePath) //remove the locally saved temporary file as cloud upload operation failed
             return null
