@@ -18,7 +18,7 @@ const userSchema = new Schema(
             lowercase : true,
             trim : true
         },
-        fullname :{
+        fullName :{
             type : String,
             required : true,
             index: true,
@@ -50,7 +50,7 @@ const userSchema = new Schema(
 //To encrypt the password
 userSchema.pre("save",async function (next) {
     if (!this.isModified(this.password)) return next()
-    this.password = bcrypt.hash(this.password,10)
+    this.password = await bcrypt.hash(this.password,10)
     next()
 })
 //To check the entered password is corrrect or not
