@@ -16,8 +16,8 @@ const registerUser = asyncHandler(async (req,res)=>{
 
      //1
      const {fullName,email,username,password} = req.body
-     console.log("Username",username);
-     console.log("Email",email);
+     /*console.log("Username",username);
+     console.log("Email",email);*/
      /*if(fullName == ""){
         throw new ApiError(400,"Full name is required")
      }*/
@@ -28,7 +28,7 @@ const registerUser = asyncHandler(async (req,res)=>{
         throw new ApiError(400,"All fields are required")
     }
     //Checking if user is alredy existed
-    const existingUser = User.find({
+    const existingUser = await User.find({
         $or : [{ username },{ email }]
     })
     if (existingUser) {
@@ -65,7 +65,7 @@ const registerUser = asyncHandler(async (req,res)=>{
     return res.status(200).json(
         new apiResponse(200,createdUser,"User sucessfully registered")
     )
-    
+
 })
 
 export {registerUser}   
