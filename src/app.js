@@ -30,5 +30,6 @@ app.use("/api/v2/users",userRouter)
 app.get('/', (req, res) => {
     res.send('API is running...');
   });
+  
 export {app}
 
