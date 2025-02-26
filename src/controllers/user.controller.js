@@ -4,6 +4,19 @@ import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/fileUpload.js";
 import {apiResponse} from "../utils/apiResponse.js"
+const generateAcessandRefreshTokens = async(userID) =>{
+    try {
+        await User.findById(userID)
+       const acessToken =  user.generateAccessToken()
+        const refreshToken = user.generateRefreshToken()
+        user.refreshToken = refreshToken
+        user.save({ validateBeforeSave : false }) 
+        return {acessToken,refreshToken}
+
+    } catch (error) {
+        throw new ApiError(500,"Something went wrong while generating acess and refresh tokens...")
+    }
+}
 const registerUser = asyncHandler(async (req, res) => {
     console.log("req.files:", req.files); // Debugging
 
@@ -71,7 +84,7 @@ const loginUser = asyncHandler(async (req,res)=>{
     if (!username || !email) {
         throw new ApiError(400,"User name or email is required...")
     }
-    //Find the user available
+    //Find the user available using username or email
     const user = await User.findOne({
         $or : [{username},{email}]
     })
@@ -81,15 +94,42 @@ const loginUser = asyncHandler(async (req,res)=>{
     //Check the password
     const isPasswordValid = await user.isPasswordCorrect(password)
     if (!isPasswordValid ) {
-        throw new ApiError(401,"Incorrect Password")
+        throw new ApiError(401,"Invalid User Credentials")
     }
-
-
-
-
+    const {acessToken,refreshToken} =  await generateAcessandRefreshTokens(user._id)
+    const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
+    const options = {
+        httpOnly : true,
+        secure : true
+    }
+    return res.status(200).cookie("acessToken",acessToken,options).cookie("refreshToken",refreshToken,options)
+    .json(
+        new apiResponse(200,{
+            user : loggedInUser,acessToken,refreshToken
+        },"User logged in sucessfully")
+    )
 } )
-
+const logOutUser = asyncHandler(async(req,res) =>{
+   await  User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $set : {
+                refreshToken : undefined
+            },
+            {
+                new : true
+            }, 
+        }
+    )
+    const options = {
+        httpOnly : true,
+        secure : true
+    }
+    return res.status(200).clearCookie("acessToken",acessToken,options)
+    .clearCookie("refreshToken",refreshToken,options)
+})
 export 
 {registerUser,
-loginUser
+ loginUser,
+ logOutUser
 }   
