@@ -3,23 +3,23 @@ import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/fileUpload.js";
 import { apiResponse } from "../utils/apiResponse.js";
-const generateAccessAndRefereshTokens = async (userId) => {
+import jwt from "jsonwebtoken"
+const generateAccessAndRefereshTokens = async(userId) =>{
   try {
-    const user = await User.findById(userId);
-    const accessToken = user.generateAccessToken();
-    const refreshToken = user.generateRefreshToken();
+      const user = await User.findById(userId)
+      const accessToken = user.generateAccessToken()
+      const refreshToken = user.generateRefreshToken()
 
-    user.refreshToken = refreshToken;
-    await user.save({ validateBeforeSave: false });
+      user.refreshToken = refreshToken
+      await user.save({ validateBeforeSave: false })
 
-    return { accessToken, refreshToken };
+      return {accessToken, refreshToken}
+
+
   } catch (error) {
-    throw new ApiError(
-      500,
-      "Something went wrong while generating referesh and access token"
-    );
+      throw new ApiError(500, "Something went wrong while generating referesh and access token")
   }
-};
+}
 const registerUser = asyncHandler(async (req, res) => {
   console.log("req.files:", req.files); // Debugging
 
@@ -142,29 +142,31 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 const logOutUser = asyncHandler(async(req, res) => {
-    await User.findByIdAndUpdate(
-        req.user._id,
-        {
-            $unset: {
-                refreshToken: 1 // this removes the field from document
-            }
-        },
-        {
-            new: true
-        }
-    )
+  await User.findByIdAndUpdate(
+      req.user._id,
+      {
+          $unset: {
+              refreshToken: 1 // this removes the field from document
+          }
+      },
+      {
+          new: true
+      }
+  )
 
-    const options = {
-        httpOnly: true,
-        secure: true
-    }
+  const options = {
+      httpOnly: true,
+      secure: true
+  }
 
-    return res
-    .status(200)
-    .clearCookie("accessToken", options)
-    .clearCookie("refreshToken", options)
-    .json(new ApiResponse(200, {}, "User logged Out"))
+  return res
+  .status(200)
+  .clearCookie("accessToken", options)
+  .clearCookie("refreshToken", options)
+  .json(new apiResponse(200, {}, "User logged out sucessfully"))
 })
+
+
   
 
 export { registerUser, loginUser, logOutUser };
