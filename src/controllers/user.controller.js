@@ -302,7 +302,13 @@ const updateUserCoverImage = asyncHandler(async(req,res)=>{
       new ApiResponse(200, user, "Cover image updated successfully")
   )
 })
-
+/*const getUserChannelProfile = asyncHandler(async(req,res)=>{
+  const{username} = req.params
+  if (!username?.trim()) {
+    throw new ApiError(400,"Username is missing")
+  }
+  await User.aggregate()
+})*/
 export { registerUser, loginUser, logOutUser,refreshAccessToken,changeCurrentPassword,getCurrentUser,updateAccountDetails,
   updateUserAvatar,updateUserCoverImage
 };
