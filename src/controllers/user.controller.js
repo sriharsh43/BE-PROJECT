@@ -312,7 +312,7 @@ const getUserChannelProfile = asyncHandler(async(req,res)=>{
   await User.aggregate()
 })
 
- const channel = await User.aggregate([
+const channel = await User.aggregate([
   {
       $match: {
           username: username?.toLowerCase()
@@ -352,7 +352,6 @@ const getUserChannelProfile = asyncHandler(async(req,res)=>{
       }
   },
   {
-    //the values that are need to be passed
       $project: {
           fullName: 1,
           username: 1,
@@ -365,17 +364,17 @@ const getUserChannelProfile = asyncHandler(async(req,res)=>{
 
       }
   }
-  if (!channel?.length) {
-    throw new ApiError(400,"Channel does not exists")
-  }
-
-  return res
-  .status(200 )
-  .json(
-    new apiResponse(200,channel[0],"User channel fetched sucessfully")
-  )
 ])
 
+if (!channel?.length) {
+  throw new ApiError(404, "channel does not exists")
+}
+
+return res
+.status(200)
+.json(
+  new ApiResponse(200, channel[0], "User channel fetched successfully")
+)
 
 
 
