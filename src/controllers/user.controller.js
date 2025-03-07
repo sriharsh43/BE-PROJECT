@@ -146,8 +146,8 @@ const logOutUser = asyncHandler(async(req, res) => {
   await User.findByIdAndUpdate(
       req.user._id,
       {
-          $set: {
-              refreshToken: undefined // this removes the field from document
+          $unset: {
+              refreshToken: 1 // this removes the field from document
           }
       },
       {
@@ -156,7 +156,7 @@ const logOutUser = asyncHandler(async(req, res) => {
   )
   const options = {
       httpOnly: true,
-      secure: true
+      secure: true    
   }
 
   return res
@@ -422,7 +422,7 @@ const getWatchHistory = asyncHandler(async(req, res) => {
   return res
   .status(200)
   .json(
-      new ApiResponse(
+      new apiResponse(
           200,
           user[0].watchHistory,
           "Watch history fetched successfully"
