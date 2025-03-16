@@ -65,7 +65,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
         await newVideo.save();
 
         // Send the response
-        res.status(201).json(new ApiResponse(201, 'Video published successfully', newVideo));
+        res.status(201).json(new apiResponse(201, 'Video published successfully', newVideo));
     } catch (error) {
         throw new ApiError(500, 'An error occurred while publishing the video');
     }
@@ -85,7 +85,7 @@ const getVideoById = asyncHandler(async (req, res) => {
             throw new ApiError(404, 'Video not found');
         }
 
-        res.status(200).json(new ApiResponse(200, 'Video fetched successfully', video));
+        res.status(200).json(new apiResponse(200, 'Video fetched successfully', video));
     } catch (error) {
         throw new ApiError(500, 'An error occurred while fetching the video');
     }
